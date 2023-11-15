@@ -53,7 +53,7 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d):
         # Dibujar línea con etiqueta del peso
         ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], 'k-', alpha=0.5)
         ax.text((punto_origen[0] + punto_destino[0]) / 2, (punto_origen[1] + punto_destino[1]) / 2, f'{distancia:.2f}', color='blue')
-
+        
     # Etiquetar los puntos
     for i in range(len(puntos_2d)):
         ax.text(puntos_2d[i, 0] - 0.02, puntos_2d[i, 1] + 0.025, canales[i])
