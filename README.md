@@ -4,7 +4,7 @@
 - [x] Graficar
 
 ## Etapa 2 Recorridos en Grafos:
-- [x] BFS
+- [ ] BFS
 - [ ] DFS
 - [ ] Costo Uniforme
 - [ ] BFS/DFS con 32 Electrodos
