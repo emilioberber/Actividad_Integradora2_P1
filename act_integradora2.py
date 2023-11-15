@@ -32,6 +32,7 @@ def calcular_distancia(punto1, punto2):
     # Fórmula de distancia entre dos puntos en 3D
     return np.sqrt((punto1[0] - punto2[0])**2 + (punto1[1] - punto2[1])**2 + (punto1[2] - punto2[2])**2)
 
+
 def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d):
     # Obtener índices de canales conectados
     conexiones = np.argwhere(matriz == 1)
