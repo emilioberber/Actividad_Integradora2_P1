@@ -6,6 +6,7 @@
 
 from collections import defaultdict
 import numpy as np
+from queue import Queue  # Necesario para la cola en BFS fifo
 import matplotlib.pyplot as plt
 
 # Para las matrices de 8 electrodos: 
@@ -30,6 +31,23 @@ x = t * points3D[:, 0]
 y = t * points3D[:, 1]
 points2D = np.column_stack((x, y))
 
+class TreeNode:
+    def __init__(self, parent, v, c):
+        self.parent = parent
+        self.v = v
+        self.c = c
+
+    def __lt__(self, node):
+        return False
+
+    def path(self):
+        node = self
+        path = []
+        while node:
+            path.insert(0, node.v)
+            node = node.parent
+        return path
+
 class Graph:
     def __init__(self):
         self.graph = defaultdict(list)
@@ -37,6 +55,9 @@ class Graph:
     def addEdge(self, u, v, cost):
         self.graph[u].append((v, cost))
         self.graph[v].append((u, cost))  # Adding this line to make the graph undirected
+
+    def adjacent_vertices(self, v):
+        return self.graph[v]
 
     def DFSUtil(self, v, visited, destination):
         visited.add(v)
@@ -57,9 +78,34 @@ class Graph:
         if not self.DFSUtil(start, visited, destination):
             print("\nDestination not reached!")
 
+    def bfs(self, v0, vg):
+        frontier = Queue()
+        frontier.put(TreeNode(None, v0, 0))
+        explored_set = set()
+
+        while not frontier.empty():
+            node = frontier.get()
+
+            if node.v == vg:
+                return {"Path": node.path()}
+
+            if node.v not in explored_set:
+                adjacent_vertices = self.adjacent_vertices(node.v)
+
+                for vertex, cost in adjacent_vertices:
+                    if vertex not in explored_set:  # Avoid revisiting already explored vertices
+                        frontier.put(TreeNode(node, vertex, cost + node.c))
+
+                explored_set.add(node.v)
+
+        return None
+
+# Create a new graph for each file
+graph = Graph()
+
 # Function to load a matrix from a file
 def cargar_matriz(nombre_archivo):
-    matriz = np.loadtxt(nombre_archivo, skiprows=1, dtype=int)
+    matriz = np.loadtxt(nombre_archivo, skiprows=0, dtype=int)
     return matriz
 
 # Function to calculate the distance between two points in 3D space
@@ -134,14 +180,26 @@ for ax, nombre_archivo in zip(axs, archivos):
         ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], 'k-', alpha=0.5)
         ax.text((punto_origen[0] + punto_destino[0]) / 2, (punto_origen[1] + punto_destino[1]) / 2, f'{distancia:.2f}', color='blue')
 
+        graph.addEdge(canal_origen, canal_destino, distancia)
+
         # Calculate the cost as the average distance between origin and destination points
         costo = calcular_distancia(points3D[conexion[0]], points3D[conexion[1]])
 
         # Add the edge to the graph
         graph.addEdge(canal_origen, canal_destino, costo)
 
+    # Perform BFS traversal from 'Fz' to 'PO8' on the current graph
+    print(f"\nFor: {nombre_archivo}")
+    print(f"BFS path: ")
+    result_bfs = graph.bfs('Fz', 'PO8')
+    if result_bfs:
+        print(' '.join(map(str, result_bfs['Path'])))
+        print("Destination reached!")
+    else:
+        print("No path found using BFS.")
+
     # Perform DFS traversal from 'Fz' to 'PO8' on the current graph
-    print(f"\nDFS Traversal for {nombre_archivo}:")
+    print(f"DFS path:")
     graph.DFS('Fz', destination='PO8')
 
 plt.show()
