@@ -88,9 +88,9 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d):
 
 #### ARCHIVOS:
 # S11 = Emilio Berber
-#archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
+# archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
 # S09 = Moisés Pineda
-archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
+# archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
 # S07 = Samuel B
 # archivos = ["Lectura_s07.txt", "Memoria_s07.txt", "Operaciones_s07.txt"]
 # S0A = Matriz con 32 electrodos 
