@@ -63,7 +63,7 @@ class Graph:
         current_path.append(v)
 
         if v == destination:
-            print("", ' '.join(current_path))
+            print(' '.join(current_path), " ")
             print("Destination reached!")
             return True
 
