@@ -59,25 +59,30 @@ class Graph:
     def adjacent_vertices(self, v):
         return self.graph[v]
 
-    def DFSUtil(self, v, visited, destination):
+    def DFSUtil(self, v, visited, destination, current_path=[]):
         visited.add(v)
-        print(v, end=' ')
+        current_path.append(v)
 
         if v == destination:
-            print("\nDestination reached!")
+            print("", ' '.join(current_path))
+            print("Destination reached!")
             return True
 
         for neighbour, cost in self.graph[v]:
             if neighbour not in visited:
-                if self.DFSUtil(neighbour, visited, destination):
+                if self.DFSUtil(neighbour, visited, destination, current_path):
                     return True
+
+        current_path.pop()
         return False
 
     def DFS(self, start, destination=None):
         visited = set()
-        if not self.DFSUtil(start, visited, destination):
-            print("\nDestination not reached!")
+        current_path = []
 
+        if not self.DFSUtil(start, visited, destination, current_path):
+            print("\nDestination not reached!")
+            
     def bfs(self, v0, vg):
         frontier = Queue()
         frontier.put(TreeNode(None, v0, 0))
@@ -145,11 +150,11 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path=None):
 
 #### ARCHIVOS:
 # S11 = Emilio Berber
-archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
+#archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
 # S09 = Moisés Pineda
-# archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
+#archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
 # S07 = Samuel B
-# archivos = ["Lectura_s07.txt", "Memoria_s07.txt", "Operaciones_s07.txt"]
+archivos = ["Lectura_s07.txt", "Memoria_s07.txt", "Operaciones_s07.txt"]
 # S0A = Matriz con 32 electrodos 
 # archivos = ["Lectura_s0a.txt", "Memoria_s0a.txt", "Operaciones_s0a.txt"]
 
