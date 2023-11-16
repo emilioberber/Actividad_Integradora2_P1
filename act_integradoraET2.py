@@ -10,17 +10,17 @@ from queue import Queue  # Necesario para la cola en BFS fifo
 import matplotlib.pyplot as plt
 
 # Para las matrices de 8 electrodos: 
-
+"""
 channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
 points3D = [[0, 0.71934, 0.694658], [-0.71934, 0, 0.694658], [0, 0, 1], [0.71934, 0, 0.694658], [0, -0.71934, 0.694658], [-0.587427, -0.808524, -0.0348995], [0, -0.999391, -0.0348995], [0.587427, -0.808524, -0.0348995]]
-
-# Para las matrcies de 32 electrodos:
 """
+# Para las matrcies de 32 electrodos:
+
 channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
 
 points3D = [[-0.308829,0.950477,-0.0348995], [0.308829,0.950477,-0.0348995], [-0.406247,0.871199,0.275637], [0.406247,0.871199,0.275637], [-0.808524,0.587427,-0.0348995], [-0.545007,0.673028,0.5], [0,0.71934,0.694658], [0.545007,0.673028,0.5], [0.808524,0.587427,-0.0348995], [-0.887888,0.340828,0.309017], [-0.37471,0.37471,0.848048], [0.37471,0.37471,0.848048], [0.887888,0.340828,0.309017], [-0.999391,0,-0.0348995], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0.999391,0,-0.0348995], [-0.887888,-0.340828,0.309017], [-0.37471,-0.37471,0.848048], [0.37471,-0.37471, 0.848048], [0.887888,-0.340828,0.309017], [-0.808524,-0.587427,-0.0348995], [-0.545007,-0.673028,0.5], [0,-0.71934,0.694658], [0.545007,-0.673028,0.5], [0.808524,-0.587427,-0.0348995], [-0.406247,-0.871199,0.275637], [0.406247,-0.871199,0.275637], [-0.308829,-0.950477,-0.0348995], [0,-0.999391,-0.0348995], [0.308829,-0.950477,-0.0348995]]
-"""
+
 points3D = np.array(points3D)
 
 # Fórmulas para pasar de 3D a 2D
@@ -48,8 +48,10 @@ class TreeNode:
         return path
 
 class Graph:
+    
     def __init__(self):
         self.graph = defaultdict(list)
+        self.dfs_path = []  # Nueva lista para almacenar el path DFS
 
     def addEdge(self, u, v, cost):
         self.graph[u].append((v, cost))
@@ -63,6 +65,7 @@ class Graph:
         current_path.append(v)
 
         if v == destination:
+            self.dfs_path = current_path.copy()  # Almacena el path DFS
             print(' '.join(current_path), " ")
             print("Destination reached!")
             return True
@@ -80,7 +83,7 @@ class Graph:
         current_path = []
 
         if not self.DFSUtil(start, visited, destination, current_path):
-            print("\nDestination not reached!")
+            print("Nodes not connected")
             
     def bfs(self, v0, vg):
         frontier = Queue()
@@ -104,8 +107,6 @@ class Graph:
 
         return None
 
-
-
 # Create a new graph for each file
 graph = Graph()
 
@@ -119,7 +120,7 @@ def calcular_distancia(punto1, punto2):
     return np.sqrt((punto1[0] - punto2[0])**2 + (punto1[1] - punto2[1])**2 + (punto1[2] - punto2[2])**2)
 
 # Function to plot connectivity on a 2D plane
-def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path=None):
+def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path_bfs=None, path_dfs=None):
     conexiones = np.argwhere(matriz == 1)
 
     ax.scatter(puntos_2d[:, 0], puntos_2d[:, 1], color='blue')  # Color azul para los puntos
@@ -133,31 +134,30 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path=None):
         distancia = calcular_distancia(puntos_3d[conexion[0]], puntos_3d[conexion[1]])
 
         # Verifica si la conexión pertenece al camino BFS encontrado
-        if path and (canal_origen, canal_destino) in path:
+        if path_bfs and (canal_origen, canal_destino) in path_bfs:
             # Dibujar la línea en rojo si es parte del camino BFS
             ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], color='red', alpha=1)
+        elif path_dfs and (canal_origen, canal_destino) in path_dfs:
+            # Dibujar la línea en verde si es parte del camino DFS
+            ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], color='yellow', alpha=0.6)
         else:
-            # Dibujar la línea en negro si no es parte del camino BFS
-            ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], 'k-', alpha=0.1)
+            # Dibujar la línea en negro si no es parte del camino BFS ni DFS
+            ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], 'k-', alpha=0.001)
 
         ax.text((punto_origen[0] + punto_destino[0]) / 2, (punto_origen[1] + punto_destino[1]) / 2, f'{distancia:.2f}', color='blue')
 
     for i in range(len(puntos_2d)):
         ax.text(puntos_2d[i, 0] - 0.02, puntos_2d[i, 1] + 0.025, canales[i])
 
-
-
-
-
 #### ARCHIVOS:
 # S11 = Emilio Berber
 # archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
 # S09 = Moisés Pineda
-archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
+# archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
 # S07 = Samuel B
 # archivos = ["Lectura_s07.txt", "Memoria_s07.txt", "Operaciones_s07.txt"]
 # S0A = Matriz con 32 electrodos 
-# archivos = ["Lectura_s0a.txt", "Memoria_s0a.txt", "Operaciones_s0a.txt"]
+archivos = ["Lectura_s0a.txt", "Memoria_s0a.txt", "Operaciones_s0a.txt"]
 
 # Create the figure
 fig, axs = plt.subplots(1, len(archivos), figsize=(15, 5))
@@ -202,20 +202,22 @@ for ax, nombre_archivo in zip(axs, archivos):
     # Perform BFS fot the current graph
     print(f"\nFor: {nombre_archivo}")
     print(f"BFS path: ")
-    result_bfs = graph.bfs('Fz', 'PO8')  # Definir el nodo inicial y el nodo objetivo
+    result_bfs = graph.bfs('F7', 'PO4')  # Definir el nodo inicial y el nodo objetivo
     if result_bfs:
         path_bfs = [(result_bfs['Path'][i], result_bfs['Path'][i+1]) for i in range(len(result_bfs['Path'])-1)]
         print(' '.join(map(str, result_bfs['Path'])))
         print("Destination reached!")
 
         # Pass the BFS path to the plotting function
-        graficar_conectividad(ax, matriz, channels, points2D, points3D, path=path_bfs)
+        graficar_conectividad(ax, matriz, channels, points2D, points3D, path_bfs=path_bfs)
     else:
         print("Nodes not connected")
 
     # Perform DFS traversal from 'Fz' to 'PO8' on the current graph
     print(f"DFS path:")
-    graph.DFS('Fz', destination='PO8')
-
+    graph.DFS('F7', destination='PO4')
+    path_dfs = [(graph.dfs_path[i], graph.dfs_path[i+1]) for i in range(len(graph.dfs_path)-1)]
+    # Pass the DFS path to the plotting function
+    graficar_conectividad(ax, matriz, channels, points2D, points3D, path_dfs=path_dfs)
 
 plt.show()
