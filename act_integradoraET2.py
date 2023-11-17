@@ -12,19 +12,19 @@ import heapq
 
 # Para las matrices de 8 electrodos: 
 
-#"""
+"""
 channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
 points3D = [[0, 0.71934, 0.694658], [-0.71934, 0, 0.694658], [0, 0, 1], [0.71934, 0, 0.694658], [0, -0.71934, 0.694658], [-0.587427, -0.808524, -0.0348995], [0, -0.999391, -0.0348995], [0.587427, -0.808524, -0.0348995]]
-#"""
+"""
 
 # Para las matrcies de 32 electrodos:
 
-"""
+#"""
 channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
 
 points3D = [[-0.308829,0.950477,-0.0348995], [0.308829,0.950477,-0.0348995], [-0.406247,0.871199,0.275637], [0.406247,0.871199,0.275637], [-0.808524,0.587427,-0.0348995], [-0.545007,0.673028,0.5], [0,0.71934,0.694658], [0.545007,0.673028,0.5], [0.808524,0.587427,-0.0348995], [-0.887888,0.340828,0.309017], [-0.37471,0.37471,0.848048], [0.37471,0.37471,0.848048], [0.887888,0.340828,0.309017], [-0.999391,0,-0.0348995], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0.999391,0,-0.0348995], [-0.887888,-0.340828,0.309017], [-0.37471,-0.37471,0.848048], [0.37471,-0.37471, 0.848048], [0.887888,-0.340828,0.309017], [-0.808524,-0.587427,-0.0348995], [-0.545007,-0.673028,0.5], [0,-0.71934,0.694658], [0.545007,-0.673028,0.5], [0.808524,-0.587427,-0.0348995], [-0.406247,-0.871199,0.275637], [0.406247,-0.871199,0.275637], [-0.308829,-0.950477,-0.0348995], [0,-0.999391,-0.0348995], [0.308829,-0.950477,-0.0348995]]
-"""
+#"""
 
 points3D = np.array(points3D)
 
@@ -113,6 +113,7 @@ class Graph:
 
         return None
 
+    
     def UCS(self, start, goal):
         priority_queue = [(0, TreeNode(None, start, 0))]  
         visited = set()
@@ -185,13 +186,13 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path_bfs=No
 
 #### ARCHIVOS:
 # S11 = Emilio Berber
-archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
+#archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
 # S09 = Moisés Pineda
 # archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
 # S07 = Samuel B
 # archivos = ["Lectura_s07.txt", "Memoria_s07.txt", "Operaciones_s07.txt"]
 # S0A = Matriz con 32 electrodos 
-# archivos = ["Lectura_s0a.txt", "Memoria_s0a.txt", "Operaciones_s0a.txt"]
+archivos = ["Lectura_s0a.txt", "Memoria_s0a.txt", "Operaciones_s0a.txt"]
 
 # Create the figure
 fig, axs = plt.subplots(1, len(archivos), figsize=(15, 5))
@@ -236,7 +237,7 @@ for ax, nombre_archivo in zip(axs, archivos):
     # Perform BFS fot the current graph
     print(f"\nFor: {nombre_archivo}")
     print(f"BFS path: ")
-    result_bfs = graph.bfs('Fz', 'PO8')  # Definir el nodo inicial y el nodo objetivo
+    result_bfs = graph.bfs('F7', 'PO4')  # Definir el nodo inicial y el nodo objetivo
     if result_bfs:
         path_bfs = [(result_bfs['Path'][i], result_bfs['Path'][i+1]) for i in range(len(result_bfs['Path'])-1)]
         print(' '.join(map(str, result_bfs['Path'])))
@@ -248,13 +249,13 @@ for ax, nombre_archivo in zip(axs, archivos):
 
     # Perform DFS traversal from 'Fz' to 'PO8' on the current graph
     print(f"DFS path:")
-    graph.DFS('Fz', destination='PO8')
+    graph.DFS('F7', destination='PO4')
     path_dfs = [(graph.dfs_path[i], graph.dfs_path[i+1]) for i in range(len(graph.dfs_path)-1)]
     # Pass the DFS path to the plotting function
     graficar_conectividad(ax, matriz, channels, points2D, points3D, path_dfs=path_dfs)
     
     print(f"UCS path:")
-    cost_ucs = graph.UCS('Fz', 'PO8')
+    cost_ucs = graph.UCS('F7', 'PO4')
     if cost_ucs is not None:
         path_ucs = [(graph.path_ucs[i], graph.path_ucs[i+1]) for i in range(len(graph.path_ucs)-1)]
         # Pass the UCS path to the plotting function
