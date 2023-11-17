@@ -152,7 +152,6 @@ def calcular_distancia(punto1, punto2):
 # Function to plot connectivity on a 2D plane
 
 def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path_bfs=None, path_dfs=None, path_ucs=None):
-def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path_bfs=None, path_dfs=None):
 
     conexiones = np.argwhere(matriz == 1)
 
