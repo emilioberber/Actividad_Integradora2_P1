@@ -17,6 +17,7 @@ channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
 points3D = [[0, 0.71934, 0.694658], [-0.71934, 0, 0.694658], [0, 0, 1], [0.71934, 0, 0.694658], [0, -0.71934, 0.694658], [-0.587427, -0.808524, -0.0348995], [0, -0.999391, -0.0348995], [0.587427, -0.808524, -0.0348995]]
 """
+
 # Para las matrcies de 32 electrodos:
 
 #"""
@@ -73,7 +74,6 @@ class Graph:
         if v == destination:
             self.dfs_path = current_path.copy()  # Almacena el path DFS
             print(' '.join(current_path), " ")
-            print("Destination reached!")
             return True
 
         for neighbour, cost in self.graph[v]:
@@ -113,6 +113,7 @@ class Graph:
 
         return None
 
+    
     def UCS(self, start, goal):
         priority_queue = [(0, TreeNode(None, start, 0))]  
         visited = set()
@@ -124,7 +125,8 @@ class Graph:
                 path = current_node.path()
                 self.path_ucs = path.copy()  # Almacena el path UCS
                 print(' '.join(path), " ")
-                return
+                print(f"UCS path cost: {cost:.2f}")  # Imprimir el costo del camino
+                return cost  # Devolver el costo total del camino
 
             if current_node.v not in visited:
                 visited.add(current_node.v)
@@ -135,7 +137,7 @@ class Graph:
                         heapq.heappush(priority_queue, (new_node.c, new_node))
 
         print(f"UCS path: No path found between {start} and {goal}")
-
+        return None
 
 # Create a new graph for each file
 graph = Graph()
@@ -150,10 +152,7 @@ def calcular_distancia(punto1, punto2):
     return np.sqrt((punto1[0] - punto2[0])**2 + (punto1[1] - punto2[1])**2 + (punto1[2] - punto2[2])**2)
 
 # Function to plot connectivity on a 2D plane
-
 def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path_bfs=None, path_dfs=None, path_ucs=None):
-def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path_bfs=None, path_dfs=None):
-
     conexiones = np.argwhere(matriz == 1)
 
     ax.scatter(puntos_2d[:, 0], puntos_2d[:, 1], color='blue')  # Color azul para los puntos
@@ -169,7 +168,6 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path_bfs=No
         # Verifica si la conexión pertenece al camino BFS encontrado
         if path_bfs and (canal_origen, canal_destino) in path_bfs:
             # Dibujar la línea en rojo si es parte del camino BFS
-
             ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], color='red', marker='D', alpha=0.9)
         elif path_dfs and (canal_origen, canal_destino) in path_dfs:
             # Dibujar la línea en verde si es parte del camino DFS
@@ -177,10 +175,6 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path_bfs=No
         elif path_ucs and (canal_origen, canal_destino) in path_ucs:
             # Dibujar la línea con el color especificado para el camino UCS
             ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], color='pink', marker='*', alpha=0.5)
-            ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], color='red', alpha=1)
-        elif path_dfs and (canal_origen, canal_destino) in path_dfs:
-            # Dibujar la línea en verde si es parte del camino DFS
-            ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], color='yellow', alpha=0.6)
         else:
             # Dibujar la línea en negro si no es parte del camino BFS ni DFS
             ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], 'k-', alpha=0.001)
@@ -192,9 +186,7 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path_bfs=No
 
 #### ARCHIVOS:
 # S11 = Emilio Berber
-
 #archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
-# archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
 # S09 = Moisés Pineda
 # archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
 # S07 = Samuel B
@@ -249,7 +241,6 @@ for ax, nombre_archivo in zip(axs, archivos):
     if result_bfs:
         path_bfs = [(result_bfs['Path'][i], result_bfs['Path'][i+1]) for i in range(len(result_bfs['Path'])-1)]
         print(' '.join(map(str, result_bfs['Path'])))
-        print("Destination reached!")
 
         # Pass the BFS path to the plotting function
         graficar_conectividad(ax, matriz, channels, points2D, points3D, path_bfs=path_bfs)
@@ -264,10 +255,10 @@ for ax, nombre_archivo in zip(axs, archivos):
     graficar_conectividad(ax, matriz, channels, points2D, points3D, path_dfs=path_dfs)
     
     print(f"UCS path:")
-    graph.UCS('F7', 'PO4')
-    path_ucs = [(graph.path_ucs[i], graph.path_ucs[i+1]) for i in range(len(graph.path_ucs)-1)]
-    # Pass the UCS path to the plotting function
-    graficar_conectividad(ax, matriz, channels, points2D, points3D, path_ucs=path_ucs)
-
+    cost_ucs = graph.UCS('F7', 'PO4')
+    if cost_ucs is not None:
+        path_ucs = [(graph.path_ucs[i], graph.path_ucs[i+1]) for i in range(len(graph.path_ucs)-1)]
+        # Pass the UCS path to the plotting function
+        graficar_conectividad(ax, matriz, channels, points2D, points3D, path_ucs=path_ucs)
 
 plt.show()

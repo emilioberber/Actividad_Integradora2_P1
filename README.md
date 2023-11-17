@@ -4,12 +4,12 @@
 - [x] Graficar
 
 ## Etapa 2 Recorridos en Grafos:
-- [ ] BFS
-- [ ] DFS
-- [ ] Costo Uniforme
-- [ ] BFS/DFS con 32 Electrodos
+- [X] BFS
+- [X] DFS
+- [X] Costo Uniforme
+- [X] BFS/DFS con 32 Electrodos
 - [ ] Floyd
-- [ ] Preguntas
+- [X] Preguntas
 
 ## Etapa 3 Árboles de Expansión Mínima:
 - [ ] Vertices de Árboles de Expansión Mínima Encontrados.
@@ -27,8 +27,8 @@
 - [ ] Preguntas
 
 ## Etapa 6 Reporte:
-- [ ] Descripción de la Situación Problema
-- [ ] Descripción del Experimento Realizado
+- [X] Descripción de la Situación Problema
+- [X] Descripción del Experimento Realizado
 - [ ] Resultados Etapa 1
 - [ ] Resultados Etapa 2
 - [ ] Resultados Etapa 3
