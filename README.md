@@ -29,8 +29,8 @@
 ## Etapa 6 Reporte:
 - [X] Descripción de la Situación Problema
 - [X] Descripción del Experimento Realizado
-- [ ] Resultados Etapa 1
-- [ ] Resultados Etapa 2
+- [X] Resultados Etapa 1
+- [X] Resultados Etapa 2
 - [ ] Resultados Etapa 3
 - [ ] Resultados Etapa 4
 - [ ] Resultados Etapa 5
