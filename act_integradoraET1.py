@@ -2,18 +2,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Para las matrices de 8 electrodos: 
-
+"""
 channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
 points3D = [[0, 0.71934, 0.694658], [-0.71934, 0, 0.694658], [0, 0, 1], [0.71934, 0, 0.694658], [0, -0.71934, 0.694658], [-0.587427, -0.808524, -0.0348995], [0, -0.999391, -0.0348995], [0.587427, -0.808524, -0.0348995]]
-
+"""
 
 # Para las matrcies de 32 electrodos:
-"""
+
 channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
 
 points3D = [[-0.308829,0.950477,-0.0348995], [0.308829,0.950477,-0.0348995], [-0.406247,0.871199,0.275637], [0.406247,0.871199,0.275637], [-0.808524,0.587427,-0.0348995], [-0.545007,0.673028,0.5], [0,0.71934,0.694658], [0.545007,0.673028,0.5], [0.808524,0.587427,-0.0348995], [-0.887888,0.340828,0.309017], [-0.37471,0.37471,0.848048], [0.37471,0.37471,0.848048], [0.887888,0.340828,0.309017], [-0.999391,0,-0.0348995], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0.999391,0,-0.0348995], [-0.887888,-0.340828,0.309017], [-0.37471,-0.37471,0.848048], [0.37471,-0.37471, 0.848048], [0.887888,-0.340828,0.309017], [-0.808524,-0.587427,-0.0348995], [-0.545007,-0.673028,0.5], [0,-0.71934,0.694658], [0.545007,-0.673028,0.5], [0.808524,-0.587427,-0.0348995], [-0.406247,-0.871199,0.275637], [0.406247,-0.871199,0.275637], [-0.308829,-0.950477,-0.0348995], [0,-0.999391,-0.0348995], [0.308829,-0.950477,-0.0348995]]
-"""
+
 points3D = np.array(points3D)
 
 # Fórmulas para pasar de 3D a 2D
@@ -25,7 +25,7 @@ points2D = np.column_stack((x, y))
 
 def cargar_matriz(nombre_archivo):
     # Carga del archivo usando numpy.loadtxt
-    matriz = np.loadtxt(nombre_archivo, skiprows=1, dtype=int)
+    matriz = np.loadtxt(nombre_archivo, skiprows=0, dtype=int)
     return matriz
 
 def calcular_distancia(punto1, punto2):
@@ -60,13 +60,13 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d):
 
 #### ARCHIVOS:
 # S11 = Emilio Berber
-#archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
+# archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
 # S09 = Moisés Pineda
-archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
+# archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
 # S07 = Samuel B
 # archivos = ["Lectura_s07.txt", "Memoria_s07.txt", "Operaciones_s07.txt"]
 # S0A = Matriz con 32 electrodos 
-# archivos = ["Lectura_s0a.txt", "Memoria_s0a.txt", "Operaciones_s0a.txt"]
+archivos = ["Lectura_s0a.txt", "Memoria_s0a.txt", "Operaciones_s0a.txt"]
 
 # Crear la figura
 fig, axs = plt.subplots(1, len(archivos), figsize=(15, 5))
