@@ -8,7 +8,7 @@
 - [X] DFS
 - [X] Costo Uniforme
 - [X] BFS/DFS con 32 Electrodos
-- [ ] Floyd
+- [X] Floyd
 - [X] Preguntas
 
 ## Etapa 3 Árboles de Expansión Mínima:
