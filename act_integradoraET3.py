@@ -13,6 +13,11 @@ channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
 points3D = [[0, 0.71934, 0.694658], [-0.71934, 0, 0.694658], [0, 0, 1], [0.71934, 0, 0.694658], [0, -0.71934, 0.694658], [-0.587427, -0.808524, -0.0348995], [0, -0.999391, -0.0348995], [0.587427, -0.808524, -0.0348995]]
 
+# Para las matrcies de 32 electrodos:
+
+#channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
+
+#points3D = [[-0.308829,0.950477,-0.0348995], [0.308829,0.950477,-0.0348995], [-0.406247,0.871199,0.275637], [0.406247,0.871199,0.275637], [-0.808524,0.587427,-0.0348995], [-0.545007,0.673028,0.5], [0,0.71934,0.694658], [0.545007,0.673028,0.5], [0.808524,0.587427,-0.0348995], [-0.887888,0.340828,0.309017], [-0.37471,0.37471,0.848048], [0.37471,0.37471,0.848048], [0.887888,0.340828,0.309017], [-0.999391,0,-0.0348995], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0.999391,0,-0.0348995], [-0.887888,-0.340828,0.309017], [-0.37471,-0.37471,0.848048], [0.37471,-0.37471, 0.848048], [0.887888,-0.340828,0.309017], [-0.808524,-0.587427,-0.0348995], [-0.545007,-0.673028,0.5], [0,-0.71934,0.694658], [0.545007,-0.673028,0.5], [0.808524,-0.587427,-0.0348995], [-0.406247,-0.871199,0.275637], [0.406247,-0.871199,0.275637], [-0.308829,-0.950477,-0.0348995], [0,-0.999391,-0.0348995], [0.308829,-0.950477,-0.0348995]]
 
 points3D = np.array(points3D)
 
@@ -33,38 +38,29 @@ def dfs(graph, start, visited):
 def find_connected_components(graph):
     visited = [False] * len(graph)
     components = []
+
     for i in range(len(graph)):
         if not visited[i]:
-            dfs(graph, i, visited)
-            components.append([j for j in range(len(graph)) if visited[j]])
-            visited = [False if i in components[-1] else v for i, v in enumerate(visited)]
+            # Start a new component
+            component = []
+            dfs(graph, i, visited, component)
+            components.append(component)
+    
     return components
 
+def dfs(graph, start, visited, component):
+    visited[start] = True
+    component.append(start)
+    for i in range(len(graph)):
+        if graph[start][i] == 1 and not visited[i]:
+            dfs(graph, i, visited, component)
+
+
 class Graph():
-    def _init_(self, vertices):
+    def _init_(self, vertices): 
         self.V = vertices
         self.graph = np.zeros((vertices, vertices), dtype=int)
 
-
-    def printMST(self, parent, channels, points_2d, ax, filename, component):
-        print(f"\nPRIM for: {filename}\n-- Arista ------------- Peso -- ")
-        total_peso = 0
-
-        for i in range(1, len(component)):
-            origen = component[parent[i]]
-            destino = component[i]
-            distancia = calcular_distancia(points3D[origen], points3D[destino])
-            total_peso += distancia
-
-            edge_color = 'red' if self.graph[origen][destino] == 1 else 'black'
-            print(f"{channels[origen]} - {channels[destino]}","\t|\t",f"{distancia:.2f}")
-
-            point_origen = points_2d[origen]
-            point_destino = points_2d[destino]
-            ax.plot([point_origen[0], point_destino[0]], [point_origen[1], point_destino[1]], color=edge_color, alpha=1)
-
-        ax.text(0.5, -0.1, f'Total Peso: {total_peso:.2f}', horizontalalignment='center', verticalalignment='center', transform=ax.transAxes, color='red')
-        print(f'Total Peso: {total_peso:.2f}')
 
 
     def minKey(self, key, mstSet, component):
@@ -79,38 +75,60 @@ class Graph():
 
         return min_index
 
+    def printMST(self, all_edges, channels, points_2d, ax, filename, color='red'):
+        print(f"\nPRIM for: {filename}\n-- Arista ------------- Peso -- ")
+        total_weight = 0
+
+        for edge in all_edges:
+            origin, destination, weight = edge
+            total_weight += weight
+            print(f"{channels[origin]} - {channels[destination]}", "\t|\t", f"{weight:.2f}")
+
+            point_origin = points_2d[origin]
+            point_destination = points_2d[destination]
+            ax.plot([point_origin[0], point_destination[0]], [point_origin[1], point_destination[1]], color=color, alpha=1)
+
+        ax.text(0.5, -0.1, f'Total Weight: {total_weight:.2f}', horizontalalignment='center', verticalalignment='center', transform=ax.transAxes, color=color)
+        print(f"Total Weight: {total_weight:.2f}")
+
     def primMST(self, channels, points_2d, points_3d, ax, filename):
-        # Identificar componentes conectados
         components = find_connected_components(self.graph)
 
+        # Encontramos el árbol más grande
+        largest_component = max(components, key=len)
+        largest_component_size = len(largest_component)
+
         for component in components:
-            # Crear un subgrafo para el componente conectado
-            subgraph = self.graph[np.ix_(component, component)]
+            if len(component) == largest_component_size:
+                # Creamos un subgrafo para el árbol encontrado
+                subgraph = self.graph[np.ix_(component, component)]
 
-            # Inicialización para el algoritmo de Prim en el subgrafo
-            key = [sys.maxsize] * len(component)
-            parent = [None] * len(component)
-            key[0] = 0
-            mstSet = [False] * len(component)
-            parent[0] = -1
+                # Prim
+                key = [sys.maxsize] * len(component)
+                parent = [-1] * len(component)
+                key[0] = 0
+                mstSet = [False] * len(component)
 
-            # Aplicar Prim en el subgrafo
-            for _ in range(len(component)):
-                u = self.minKey(key, mstSet, component) # Asegúrate de que minKey maneje subgrafos
-                mstSet[u] = True
+                for count in range(len(component)):
+                    u = self.minKey(key, mstSet, component)
+                    mstSet[u] = True
 
-                for v in range(len(component)):
-                    if subgraph[u][v] == 1 and mstSet[v] == False:
-                        distance = calcular_distancia(points_3d[component[u]], points_3d[component[v]])
-                        if key[v] > distance:
-                            key[v] = distance
+                    for v in range(len(component)):
+                        if 0 < subgraph[u][v] < key[v] and not mstSet[v]:
+                            key[v] = subgraph[u][v]
                             parent[v] = u
 
-            # Imprimir y dibujar el MST para el subgrafo
-            self.printMST(parent, channels, points_2d, ax, filename, component)
+                # Calculamos toda la información para los nodos y aristas de nuestro MST
+                all_edges = []
+                for i in range(1, len(component)):
+                    if parent[i] != -1:
+                        origin = component[parent[i]]
+                        destination = component[i]
+                        weight = calcular_distancia(points_3d[origin], points_3d[destination])
+                        all_edges.append((origin, destination, weight))
 
-
-
+                # Imprimimos en rojo el MST encontrado más grande
+                self.printMST(all_edges, channels, points_2d, ax, filename)
 
 def cargar_matriz(nombre_archivo):
     # Carga del archivo usando numpy.loadtxt
@@ -151,11 +169,14 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d):
 
 #### ARCHIVOS:
 # S11 = Emilio Berber
-# archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
+archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
 # S09 = Moisés Pineda
 # archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
 # S07 = Samuel B
-archivos = ["Lectura_s07.txt", "Memoria_s07.txt", "Operaciones_s07.txt"]
+# archivos = ["Lectura_s07.txt", "Memoria_s07.txt", "Operaciones_s07.txt"]
+# S0A = Matriz con 32 electrodos 
+# archivos = ["Lectura_s0a.txt", "Memoria_s0a.txt", "Operaciones_s0a.txt"]
+
 
 # Crear la figura
 fig, axs = plt.subplots(1, len(archivos), figsize=(15, 5))
@@ -172,8 +193,12 @@ for ax, nombre_archivo in zip(axs, archivos):
             matriz[j, i] = 1
 
     # Crear el objeto de grafo y asignar la matriz de conexión
+    num_vertices = len(channels)
+
     g = Graph()
     g.graph = matriz
+    #print("Matrix for file", nombre_archivo, ":\n", matriz)
+
 
     # Dibujar puntos y distancias
     graficar_conectividad(ax, matriz, channels, points2D, points3D)
