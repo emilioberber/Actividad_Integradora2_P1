@@ -63,9 +63,9 @@ def calcular_grado(matriz):
 # Función para graficar conectividad y diagrama de Voronoi con colores según el grado
 def graficar_conectividad_voronoi(ax, matriz, canales, puntos_2d, puntos_3d, nombre_archivo):
     # Calcular el grado de cada vértice
-    grado = calcular_grado(matriz)
+    grado = np.sum(matriz, axis=0)
 
-    # Imprimir cálculo del grado en la terminal
+    # Imprimir información del grado en la terminal
     print(f"\nArchivo: {nombre_archivo}")
     for canal, g in zip(canales, grado):
         print(f"Grado de {canal}: {g}")
@@ -73,10 +73,10 @@ def graficar_conectividad_voronoi(ax, matriz, canales, puntos_2d, puntos_3d, nom
     # Obtener índices de canales conectados
     conexiones = np.argwhere(matriz == 1)
 
-    # Graficar puntos
-    ax.scatter(puntos_2d[:, 0], puntos_2d[:, 1], c=grado, cmap='Blues')
+    # Graficar puntos con colores según el grado
+    sc = ax.scatter(puntos_2d[:, 0], puntos_2d[:, 1], c=grado, cmap='Blues')
 
-    # Etiquetar los puntos 
+    # Etiquetar los puntos
     for i in range(len(puntos_2d)):
         ax.text(puntos_2d[i, 0] - 0.02, puntos_2d[i, 1] + 0.025, canales[i])
 
@@ -91,19 +91,23 @@ def graficar_conectividad_voronoi(ax, matriz, canales, puntos_2d, puntos_3d, nom
             polygon = [vor.vertices[i] for i in region]
             ax.fill(*zip(*polygon), color=plt.cm.Blues(grado[r] / np.max(grado)))
 
-
+    # Dibujar el círculo que representa la cabeza
     circle = plt.Circle((0, 0), 1.04, color='r', alpha=0.25, fill=False)
     ax.add_patch(circle)
+
     ax.set_title(f"Voronoi para {nombre_archivo.replace('.txt', '')}")
     ax.set_xlabel('X')
     ax.set_ylabel('Y')
     ax.axis('equal')
 
+    # Agregar leyenda
+    legend = ax.figure.colorbar(sc, ax=ax, orientation='vertical')
+    legend.set_label('Número de aristas (Grado)')
+
 #### ARCHIVOS:
 # S11 = Emilio Berber
-archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
+# archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
 # S09 = Moisés Pineda
-# archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
 # archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
 # S07 = Samuel B
 # archivos = ["Lectura_s07.txt", "Memoria_s07.txt", "Operaciones_s07.txt"]
@@ -116,7 +120,7 @@ fig, axs = plt.subplots(1, len(archivos), figsize=(15, 5))
 # Mostrar grafos y diagramas de Voronoi para cada archivo .txt
 for ax, nombre_archivo in zip(axs, archivos):
     matriz = cargar_matriz(nombre_archivo)
-    
+
     # Graficar conectividad y diagrama de Voronoi
     graficar_conectividad_voronoi(ax, matriz, channels, points2D, points3D, nombre_archivo)
 
