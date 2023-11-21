@@ -6,7 +6,7 @@
 
 from collections import defaultdict
 import numpy as np
-from queue import Queue  # Necesario para la cola en BFS fifo
+from queue import Queue 
 import matplotlib.pyplot as plt
 import heapq
 
@@ -67,6 +67,7 @@ class Graph:
     def adjacent_vertices(self, v):
         return self.graph[v]
 
+    # Algoritmo DFS
     def DFSUtil(self, v, visited, destination, current_path=[]):
         visited.add(v)
         current_path.append(v)
@@ -90,7 +91,8 @@ class Graph:
 
         if not self.DFSUtil(start, visited, destination, current_path):
             print("Nodes not connected")
-            
+
+    # Algoritmo BFS      
     def bfs(self, v0, vg):
         frontier = Queue()
         frontier.put(TreeNode(None, v0, 0))
@@ -113,7 +115,7 @@ class Graph:
 
         return None
 
-    
+    # Algoritmo UCS
     def UCS(self, start, goal):
         priority_queue = [(0, TreeNode(None, start, 0))]  
         visited = set()
@@ -139,6 +141,34 @@ class Graph:
         print(f"UCS path: No path found between {start} and {goal}")
         return None
 
+    # Algoritmo Floyd - Warshall
+    def floyd_warshall(self):
+        n = len(channels)
+        distancias = np.zeros((n, n), dtype=np.float64)
+        caminos = [[[] for _ in range(n)] for _ in range(n)]
+
+        # Inicializar la matriz de distancias con infinito para representar la ausencia de conexión directa
+        distancias.fill(np.inf)
+
+        # Inicializar la diagonal con distancias 0
+        np.fill_diagonal(distancias, 0)
+
+        # Llenar la matriz de distancias con las distancias conocidas
+        for u in self.graph:
+            for v, cost in self.graph[u]:
+                distancias[channels.index(u)][channels.index(v)] = cost
+                caminos[channels.index(u)][channels.index(v)] = [(u, 0), (v, cost)]
+
+        # Aplicar el algoritmo de Floyd-Warshall
+        for k in range(n):
+            for i in range(n):
+                for j in range(n):
+                    if distancias[i][j] > distancias[i][k] + distancias[k][j]:
+                        distancias[i][j] = distancias[i][k] + distancias[k][j]
+                        caminos[i][j] = caminos[i][k] + caminos[k][j][1:]
+
+        return distancias, caminos
+
 # Create a new graph for each file
 graph = Graph()
 
@@ -153,6 +183,8 @@ def calcular_distancia(punto1, punto2):
 
 # Function to plot connectivity on a 2D plane
 def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path_bfs=None, path_dfs=None, path_ucs=None):
+
+
     conexiones = np.argwhere(matriz == 1)
 
     ax.scatter(puntos_2d[:, 0], puntos_2d[:, 1], color='blue')  # Color azul para los puntos
@@ -186,7 +218,7 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, path_bfs=No
 
 #### ARCHIVOS:
 # S11 = Emilio Berber
-#archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
+# archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
 # S09 = Moisés Pineda
 # archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
 # S07 = Samuel B
@@ -237,7 +269,7 @@ for ax, nombre_archivo in zip(axs, archivos):
     # Perform BFS fot the current graph
     print(f"\nFor: {nombre_archivo}")
     print(f"BFS path: ")
-    result_bfs = graph.bfs('F7', 'PO4')  # Definir el nodo inicial y el nodo objetivo
+    result_bfs = graph.bfs('FC5', 'C4')  # Definir el nodo inicial y el nodo objetivo
     if result_bfs:
         path_bfs = [(result_bfs['Path'][i], result_bfs['Path'][i+1]) for i in range(len(result_bfs['Path'])-1)]
         print(' '.join(map(str, result_bfs['Path'])))
@@ -247,18 +279,31 @@ for ax, nombre_archivo in zip(axs, archivos):
     else:
         print("Nodes not connected")
 
-    # Perform DFS traversal from 'Fz' to 'PO8' on the current graph
+    # Perform DFS fot the current graph
     print(f"DFS path:")
-    graph.DFS('F7', destination='PO4')
+    graph.DFS('FC5', destination='C4') # Definir el nodo inicial y el nodo objetivo
     path_dfs = [(graph.dfs_path[i], graph.dfs_path[i+1]) for i in range(len(graph.dfs_path)-1)]
     # Pass the DFS path to the plotting function
     graficar_conectividad(ax, matriz, channels, points2D, points3D, path_dfs=path_dfs)
     
+    # Perform UCS fot the current graph
     print(f"UCS path:")
-    cost_ucs = graph.UCS('F7', 'PO4')
+    cost_ucs = graph.UCS('FC5', 'C4') # Definir el nodo inicial y el nodo objetivo
     if cost_ucs is not None:
         path_ucs = [(graph.path_ucs[i], graph.path_ucs[i+1]) for i in range(len(graph.path_ucs)-1)]
         # Pass the UCS path to the plotting function
         graficar_conectividad(ax, matriz, channels, points2D, points3D, path_ucs=path_ucs)
+    
+    # Algoritmo Floyd-Warshall para cada grafo
+    distancias_floyd, caminos_floyd = graph.floyd_warshall()
+
+    # Imprimir las distancias mínimas y caminos entre todas las parejas de electrodos (Floyd-Warshall)
+    print("\nFLOYD-WARSHALL Distancias mínimas y caminos:")
+    for i, canal_origen in enumerate(channels):
+        for j, canal_destino in enumerate(channels):
+            if i != j:
+                distancia = distancias_floyd[i][j]
+                camino = caminos_floyd[i][j]
+                print(f"{canal_origen} -> {canal_destino}: [{' -> '.join([f'{nodo}({valor:.2f})' for nodo, valor in camino])}] | TOTAL: {distancia:.2f}")
 
 plt.show()
