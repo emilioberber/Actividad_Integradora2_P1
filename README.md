@@ -40,7 +40,7 @@
 - [X] Resultados Etapa 1
 - [X] Resultados Etapa 2
 - [x] Resultados Etapa 3
-- [ ] Resultados Etapa 4
+- [x] Resultados Etapa 4
 - [x] Resultados Etapa 5
 - [x] Conclusión (Reflexión Personal sobre la Problemática Resuelta y Dificultades en la Elaboración)
   - [x] Moy
