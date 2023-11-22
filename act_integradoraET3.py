@@ -29,25 +29,6 @@ x = t * points3D[:, 0]
 y = t * points3D[:, 1]
 points2D = np.column_stack((x, y))
 
-def dfs(graph, start, visited):
-    visited[start] = True
-    for i in range(len(graph)):
-        if graph[start][i] == 1 and not visited[i]:
-            dfs(graph, i, visited)
-
-def find_connected_components(graph):
-    visited = [False] * len(graph)
-    components = []
-
-    for i in range(len(graph)):
-        if not visited[i]:
-            # Start a new component
-            component = []
-            dfs(graph, i, visited, component)
-            components.append(component)
-    
-    return components
-
 def dfs(graph, start, visited, component):
     visited[start] = True
     component.append(start)
@@ -55,80 +36,77 @@ def dfs(graph, start, visited, component):
         if graph[start][i] == 1 and not visited[i]:
             dfs(graph, i, visited, component)
 
+def find_connected_components(graph):
+    visited = [False] * len(graph)
+    components = []
+
+    for i in range(len(graph)):
+        if not visited[i]:
+            component = []
+            dfs(graph, i, visited, component)
+            components.append(component)
+    
+    return components
 
 class Graph():
-    def _init_(self, vertices): 
+    def __init__(self, vertices): 
         self.V = vertices
         self.graph = np.zeros((vertices, vertices), dtype=int)
 
-
-
-    def minKey(self, key, mstSet, component):
+    def minKey(self, key, mstSet):
         min_val = sys.maxsize
         min_index = -1
-
-        for i in range(len(component)):
-            v = component[i]
-            if key[i] < min_val and not mstSet[i]:
-                min_val = key[i]
-                min_index = i
-
+        for v in range(len(key)):
+            if key[v] < min_val and not mstSet[v]:
+                min_val = key[v]
+                min_index = v
         return min_index
 
-    def printMST(self, all_edges, channels, points_2d, ax, filename, color='red'):
+    def printMST(self, parent, key, channels, points_2d, ax, filename):
         print(f"\nPRIM for: {filename}\n-- Arista ------------- Peso -- ")
         total_weight = 0
+        for i in range(1, len(parent)):
+            if parent[i] is not None and not np.isinf(key[i]):
+                print(f"{channels[parent[i]]} - {channels[i]}", "\t|\t", f"{key[i]:.2f}")
+                total_weight += key[i]
+                point_origin = points_2d[parent[i]]
+                point_destination = points_2d[i]
+                ax.plot([point_origin[0], point_destination[0]], [point_origin[1], point_destination[1]], color='red', alpha=1)
+            elif np.isinf(key[i]):
+                print(f"{channels[i]} is not connected to the MST.")
 
-        for edge in all_edges:
-            origin, destination, weight = edge
-            total_weight += weight
-            print(f"{channels[origin]} - {channels[destination]}", "\t|\t", f"{weight:.2f}")
-
-            point_origin = points_2d[origin]
-            point_destination = points_2d[destination]
-            ax.plot([point_origin[0], point_destination[0]], [point_origin[1], point_destination[1]], color=color, alpha=1)
-
-        ax.text(0.5, -0.1, f'Total Weight: {total_weight:.2f}', horizontalalignment='center', verticalalignment='center', transform=ax.transAxes, color=color)
-        print(f"Total Weight: {total_weight:.2f}")
+        ax.text(0.5, -0.1, f'Total Weight: {total_weight:.2f}' if not np.isinf(total_weight) else 'Total Weight: Not connected', horizontalalignment='center', verticalalignment='center', transform=ax.transAxes, color='red')
+        print(f"Total Weight: {total_weight:.2f}" if not np.isinf(total_weight) else "Total Weight: Not connected")
 
     def primMST(self, channels, points_2d, points_3d, ax, filename):
+        # Encontramos el grafo conectado más grande
         components = find_connected_components(self.graph)
-
-        # Encontramos el árbol más grande
         largest_component = max(components, key=len)
-        largest_component_size = len(largest_component)
 
-        for component in components:
-            if len(component) == largest_component_size:
-                # Creamos un subgrafo para el árbol encontrado
-                subgraph = self.graph[np.ix_(component, component)]
+        # Se inicializan las llaves como infinitas y el padre más grande como ninguno
+        key = [float('inf')] * len(largest_component)
+        parent = [None] * len(largest_component)
+        mstSet = [False] * len(largest_component)
 
-                # Prim
-                key = [sys.maxsize] * len(component)
-                parent = [-1] * len(component)
-                key[0] = 0
-                mstSet = [False] * len(component)
+        # Empezando con el primer vértice del grafo más grande enco
+        key[0] = 0
+        parent[0] = -1 
 
-                for count in range(len(component)):
-                    u = self.minKey(key, mstSet, component)
-                    mstSet[u] = True
+        for cout in range(len(largest_component)):
+            u = self.minKey(key, mstSet)
 
-                    for v in range(len(component)):
-                        if 0 < subgraph[u][v] < key[v] and not mstSet[v]:
-                            key[v] = subgraph[u][v]
-                            parent[v] = u
+            # El vértice de la menor distancia se agrega
+            mstSet[u] = True
+            # Actualizar la llave y el índice padre de los vértices adyacentes al seleccionado.
+            for v in range(len(largest_component)):
+                if self.graph[largest_component[u]][largest_component[v]] == 1 and not mstSet[v]:
+                    distance = calcular_distancia(points_3d[largest_component[u]], points_3d[largest_component[v]])
+                    if distance < key[v]:
+                        key[v] = distance
+                        parent[v] = u
 
-                # Calculamos toda la información para los nodos y aristas de nuestro MST
-                all_edges = []
-                for i in range(1, len(component)):
-                    if parent[i] != -1:
-                        origin = component[parent[i]]
-                        destination = component[i]
-                        weight = calcular_distancia(points_3d[origin], points_3d[destination])
-                        all_edges.append((origin, destination, weight))
-
-                # Imprimimos en rojo el MST encontrado más grande
-                self.printMST(all_edges, channels, points_2d, ax, filename)
+        # Imprimir el MST generado
+        self.printMST(parent, key, channels, points_2d, ax, filename)
 
 def cargar_matriz(nombre_archivo):
     # Carga del archivo usando numpy.loadtxt
@@ -177,7 +155,6 @@ archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
 # S0A = Matriz con 32 electrodos 
 # archivos = ["Lectura_s0a.txt", "Memoria_s0a.txt", "Operaciones_s0a.txt"]
 
-
 # Crear la figura
 fig, axs = plt.subplots(1, len(archivos), figsize=(15, 5))
 
@@ -195,7 +172,7 @@ for ax, nombre_archivo in zip(axs, archivos):
     # Crear el objeto de grafo y asignar la matriz de conexión
     num_vertices = len(channels)
 
-    g = Graph()
+    g = Graph(num_vertices)
     g.graph = matriz
     #print("Matrix for file", nombre_archivo, ":\n", matriz)
 
