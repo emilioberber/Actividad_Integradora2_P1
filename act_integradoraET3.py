@@ -29,12 +29,11 @@ x = t * points3D[:, 0]
 y = t * points3D[:, 1]
 points2D = np.column_stack((x, y))
 
-def dfs(graph, start, visited, component):
+def dfs(graph, start, visited):
     visited[start] = True
-    component.append(start)
     for i in range(len(graph)):
         if graph[start][i] == 1 and not visited[i]:
-            dfs(graph, i, visited, component)
+            dfs(graph, i, visited)
 
 def find_connected_components(graph):
     visited = [False] * len(graph)
@@ -47,6 +46,14 @@ def find_connected_components(graph):
             components.append(component)
     
     return components
+
+def dfs(graph, start, visited, component):
+    visited[start] = True
+    component.append(start)
+    for i in range(len(graph)):
+        if graph[start][i] == 1 and not visited[i]:
+            dfs(graph, i, visited, component)
+
 
 class Graph():
     def __init__(self, vertices): 

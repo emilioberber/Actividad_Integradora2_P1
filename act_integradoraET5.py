@@ -82,12 +82,12 @@ def graficar_conectividad_voronoi(ax, matriz, canales, puntos_2d, puntos_3d, nom
 
     # Graficar diagrama de Voronoi
     vor = Voronoi(puntos_2d)
-    voronoi_plot_2d(vor, ax=ax, show_points=True, show_vertices=False, s=1)
+    voronoi_plot_2d(vor, ax=ax, show_points=False, show_vertices=False, s=1)
 
-    # Pintar cada región con un color que represente el grado del vértice
-    for r in range(len(vor.point_region)):
-        region = vor.regions[vor.point_region[r]]
-        if not -1 in region:
+    # Dibujar las regiones de Voronoi y colorearlas según el grado
+    for r, region_index in enumerate(vor.point_region):
+        region = vor.regions[region_index]
+        if not -1 in region and len(region) > 2:
             polygon = [vor.vertices[i] for i in region]
             ax.fill(*zip(*polygon), color=plt.cm.Blues(grado[r] / np.max(grado)))
 
