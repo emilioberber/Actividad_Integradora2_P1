@@ -3,9 +3,9 @@
 ![ELECTROENCEFALOGRAMA](https://github.com/emilioberber/Actividad_Integradora2_P1/assets/108374590/35f46ae7-85a8-483a-93ad-46252d7c242b)
 
 ## Colaboradores del proyecto:
-Moisés Hiram Pineda Campos
-Emilio Berber Maldonado
-Samuel García Berenfeld
+- Moisés Hiram Pineda Campos
+- Emilio Berber Maldonado
+- Samuel García Berenfeld
 
 
 ## Etapa 1:
