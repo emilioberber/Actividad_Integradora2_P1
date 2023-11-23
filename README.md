@@ -1,4 +1,12 @@
+
 # Actividad integradora 2 - Parte 1: Redes de conectividad en el cerebro humano
+![ELECTROENCEFALOGRAMA](https://github.com/emilioberber/Actividad_Integradora2_P1/assets/108374590/35f46ae7-85a8-483a-93ad-46252d7c242b)
+
+## Colaboradores del proyecto:
+- Moisés Hiram Pineda Campos
+- Emilio Berber Maldonado
+- Samuel García Berenfeld
+
 
 ## Etapa 1:
 - [x] Graficar
@@ -12,29 +20,29 @@
 - [X] Preguntas
 
 ## Etapa 3 Árboles de Expansión Mínima:
-- [ ] Vertices de Árboles de Expansión Mínima Encontrados.
-- [ ] Gráficas de Árboles de Expansión
-- [ ] Preguntas
+- [x] Vertices de Árboles de Expansión Mínima Encontrados.
+- [x] Gráficas de Árboles de Expansión
+- [x] Preguntas
 
 ## Etapa 4 Casco Convexo:
-- [ ] Gráficos de Polígonos Encontrados
-- [ ] Preguntas
+- [x] Gráficos de Polígonos Encontrados
+- [x] Preguntas
 
 ## Etapa 5 Voronoi:
-- [ ] Diagramas de Voronoi
-- [ ] Pintar Diagramas
-- [ ] Circulos en el Origen (Opcional)
-- [ ] Preguntas
+- [x] Diagramas de Voronoi
+- [x] Pintar Diagramas
+- [x] Circulos en el Origen (Opcional)
+- [x] Preguntas
 
 ## Etapa 6 Reporte:
 - [X] Descripción de la Situación Problema
 - [X] Descripción del Experimento Realizado
 - [X] Resultados Etapa 1
 - [X] Resultados Etapa 2
-- [ ] Resultados Etapa 3
-- [ ] Resultados Etapa 4
-- [ ] Resultados Etapa 5
-- [ ] Conclusión (Reflexión Personal sobre la Problemática Resuelta y Dificultades en la Elaboración)
-  - [ ] Moy
-  - [ ] Sam
-  - [ ] Emilio
+- [x] Resultados Etapa 3
+- [x] Resultados Etapa 4
+- [x] Resultados Etapa 5
+- [x] Conclusión (Reflexión Personal sobre la Problemática Resuelta y Dificultades en la Elaboración)
+  - [x] Moy
+  - [x] Sam
+  - [x] Emilio
