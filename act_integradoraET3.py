@@ -9,15 +9,15 @@ import sys
 
 # Para las matrices de 8 electrodos: 
 
-channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
+#channels = ['Fz', 'C3', 'Cz', 'C4', 'Pz', 'PO7', 'Oz', 'PO8']
 
-points3D = [[0, 0.71934, 0.694658], [-0.71934, 0, 0.694658], [0, 0, 1], [0.71934, 0, 0.694658], [0, -0.71934, 0.694658], [-0.587427, -0.808524, -0.0348995], [0, -0.999391, -0.0348995], [0.587427, -0.808524, -0.0348995]]
+#points3D = [[0, 0.71934, 0.694658], [-0.71934, 0, 0.694658], [0, 0, 1], [0.71934, 0, 0.694658], [0, -0.71934, 0.694658], [-0.587427, -0.808524, -0.0348995], [0, -0.999391, -0.0348995], [0.587427, -0.808524, -0.0348995]]
 
 # Para las matrcies de 32 electrodos:
 
-#channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
+channels = ['Fp1','Fp2', 'AF3', 'AF4', 'F7', 'F3', 'Fz', 'F4', 'F8', 'FC5', 'FC1', 'FC2', 'FC6', 'T7', 'C3', 'Cz', 'C4', 'T8', 'CP5', 'CP1', 'CP2', 'CP6', 'P7', 'P3', 'Pz', 'P4', 'P8', 'PO3', 'PO4', 'O1', 'Oz', 'O2']
 
-#points3D = [[-0.308829,0.950477,-0.0348995], [0.308829,0.950477,-0.0348995], [-0.406247,0.871199,0.275637], [0.406247,0.871199,0.275637], [-0.808524,0.587427,-0.0348995], [-0.545007,0.673028,0.5], [0,0.71934,0.694658], [0.545007,0.673028,0.5], [0.808524,0.587427,-0.0348995], [-0.887888,0.340828,0.309017], [-0.37471,0.37471,0.848048], [0.37471,0.37471,0.848048], [0.887888,0.340828,0.309017], [-0.999391,0,-0.0348995], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0.999391,0,-0.0348995], [-0.887888,-0.340828,0.309017], [-0.37471,-0.37471,0.848048], [0.37471,-0.37471, 0.848048], [0.887888,-0.340828,0.309017], [-0.808524,-0.587427,-0.0348995], [-0.545007,-0.673028,0.5], [0,-0.71934,0.694658], [0.545007,-0.673028,0.5], [0.808524,-0.587427,-0.0348995], [-0.406247,-0.871199,0.275637], [0.406247,-0.871199,0.275637], [-0.308829,-0.950477,-0.0348995], [0,-0.999391,-0.0348995], [0.308829,-0.950477,-0.0348995]]
+points3D = [[-0.308829,0.950477,-0.0348995], [0.308829,0.950477,-0.0348995], [-0.406247,0.871199,0.275637], [0.406247,0.871199,0.275637], [-0.808524,0.587427,-0.0348995], [-0.545007,0.673028,0.5], [0,0.71934,0.694658], [0.545007,0.673028,0.5], [0.808524,0.587427,-0.0348995], [-0.887888,0.340828,0.309017], [-0.37471,0.37471,0.848048], [0.37471,0.37471,0.848048], [0.887888,0.340828,0.309017], [-0.999391,0,-0.0348995], [-0.71934,0,0.694658], [0,0,1], [0.71934,0,0.694658], [0.999391,0,-0.0348995], [-0.887888,-0.340828,0.309017], [-0.37471,-0.37471,0.848048], [0.37471,-0.37471, 0.848048], [0.887888,-0.340828,0.309017], [-0.808524,-0.587427,-0.0348995], [-0.545007,-0.673028,0.5], [0,-0.71934,0.694658], [0.545007,-0.673028,0.5], [0.808524,-0.587427,-0.0348995], [-0.406247,-0.871199,0.275637], [0.406247,-0.871199,0.275637], [-0.308829,-0.950477,-0.0348995], [0,-0.999391,-0.0348995], [0.308829,-0.950477,-0.0348995]]
 
 points3D = np.array(points3D)
 
@@ -59,6 +59,8 @@ class Graph():
     def __init__(self, vertices): 
         self.V = vertices
         self.graph = np.zeros((vertices, vertices), dtype=int)
+        self.mst_edges = []
+
 
     def minKey(self, key, mstSet):
         min_val = sys.maxsize
@@ -90,12 +92,15 @@ class Graph():
         components = find_connected_components(self.graph)
         largest_component = max(components, key=len)
 
+        # Almacenar las aristas del MST en la instancia de la clase
+        self.mst_edges = []
+
         # Se inicializan las llaves como infinitas y el padre más grande como ninguno
         key = [float('inf')] * len(largest_component)
         parent = [None] * len(largest_component)
         mstSet = [False] * len(largest_component)
 
-        # Empezando con el primer vértice del grafo más grande enco
+        # Empezando con el primer vértice del grafo más grande
         key[0] = 0
         parent[0] = -1 
 
@@ -104,6 +109,11 @@ class Graph():
 
             # El vértice de la menor distancia se agrega
             mstSet[u] = True
+
+            # Almacenar las aristas del MST
+            if parent[u] is not None:
+                self.mst_edges.append((largest_component[parent[u]], largest_component[u]))
+
             # Actualizar la llave y el índice padre de los vértices adyacentes al seleccionado.
             for v in range(len(largest_component)):
                 if self.graph[largest_component[u]][largest_component[v]] == 1 and not mstSet[v]:
@@ -114,6 +124,7 @@ class Graph():
 
         # Imprimir el MST generado
         self.printMST(parent, key, channels, points_2d, ax, filename)
+        
 
 def cargar_matriz(nombre_archivo):
     # Carga del archivo usando numpy.loadtxt
@@ -126,7 +137,7 @@ def calcular_distancia(punto1, punto2):
     return np.sqrt((punto1[0] - punto2[0]) ** 2 + (punto1[1] - punto2[1]) ** 2 + (punto1[2] - punto2[2]) ** 2)
 
 
-def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d):
+def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d, mst_edges=None):
     # Obtener índices de canales conectados
     conexiones = np.argwhere(matriz == 1)
 
@@ -137,6 +148,11 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d):
     for conexion in conexiones:
         canal_origen = conexion[0]
         canal_destino = conexion[1]
+
+        if mst_edges is not None and (canal_origen, canal_destino) not in mst_edges and (canal_destino, canal_origen) not in mst_edges:
+            # Saltar esta conexión si no está en el MST
+            continue
+
         punto_origen = puntos_2d[canal_origen]
         punto_destino = puntos_2d[canal_destino]
 
@@ -144,23 +160,24 @@ def graficar_conectividad(ax, matriz, canales, puntos_2d, puntos_3d):
         distancia = calcular_distancia(puntos_3d[canal_origen], puntos_3d[canal_destino])
 
         # Dibujar línea con etiqueta del peso
-        ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]],'k-', alpha=0.5)
-        ax.text((punto_origen[0] + punto_destino[0]) / 2, (punto_origen[1] + punto_destino[1]) / 2,f'{distancia:.2f}', color='blue')
+        ax.plot([punto_origen[0], punto_destino[0]], [punto_origen[1], punto_destino[1]], 'r-', alpha=1)
+        ax.text((punto_origen[0] + punto_destino[0]) / 2, (punto_origen[1] + punto_destino[1]) / 2, f'{distancia:.2f}', color='red')
 
     # Etiquetar los puntos
     for i in range(len(puntos_2d)):
         ax.text(puntos_2d[i, 0] - 0.02, puntos_2d[i, 1] + 0.025, canales[i])
 
 
+
 #### ARCHIVOS:
 # S11 = Emilio Berber
-archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
+# archivos = ["Lectura_s11.txt", "Memoria_s11.txt", "Operaciones_s11.txt"]
 # S09 = Moisés Pineda
 # archivos = ["Lectura_s09.txt", "Memoria_s09.txt", "Operaciones_s09.txt"]
 # S07 = Samuel B
 # archivos = ["Lectura_s07.txt", "Memoria_s07.txt", "Operaciones_s07.txt"]
 # S0A = Matriz con 32 electrodos 
-# archivos = ["Lectura_s0a.txt", "Memoria_s0a.txt", "Operaciones_s0a.txt"]
+archivos = ["Lectura_s0a.txt", "Memoria_s0a.txt", "Operaciones_s0a.txt"]
 
 # Crear la figura
 fig, axs = plt.subplots(1, len(archivos), figsize=(15, 5))
@@ -185,7 +202,8 @@ for ax, nombre_archivo in zip(axs, archivos):
 
 
     # Dibujar puntos y distancias
-    graficar_conectividad(ax, matriz, channels, points2D, points3D)
+    graficar_conectividad(ax, matriz, channels, points2D, points3D, mst_edges=g.mst_edges)
+
 
     # Dibujar el MST
     g.primMST(channels, points2D, points3D, ax, nombre_archivo)
