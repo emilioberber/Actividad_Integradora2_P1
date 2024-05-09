@@ -1,48 +1,71 @@
+**Connectivity Networks on Human Brain**
 
-# Actividad integradora 2 - Parte 1: Redes de conectividad en el cerebro humano
-![ELECTROENCEFALOGRAMA](https://github.com/emilioberber/Actividad_Integradora2_P1/assets/108374590/35f46ae7-85a8-483a-93ad-46252d7c242b)
+*November 2023 — December 2023*
 
-## Colaboradores del proyecto:
+**Neuroinformatics Investigation Python**
+
+---
+
+**Project Overview:**
+
+The project "Connectivity Networks on Human Brain" conducted a comprehensive investigation into brain activity during cognitive tasks, utilizing EEG (Electroencephalogram) technology. Employing various Python-based neuroinformatics techniques, the project aimed to understand the intricate connectivity patterns within the human brain.
+
+**Contributors:**
 - Moisés Hiram Pineda Campos
 - Emilio Berber Maldonado
-- Samuel García Berenfeld
 
+---
 
-## Etapa 1:
-- [x] Graficar
+**Project Phases:**
 
-## Etapa 2 Recorridos en Grafos:
-- [X] BFS
-- [X] DFS
-- [X] Costo Uniforme
-- [X] BFS/DFS con 32 Electrodos
-- [X] Floyd
-- [X] Preguntas
+**Phase 1: Graph Visualization**
+- Initial visualization of brain activity data.
 
-## Etapa 3 Árboles de Expansión Mínima:
-- [x] Vertices de Árboles de Expansión Mínima Encontrados.
-- [x] Gráficas de Árboles de Expansión
-- [x] Preguntas
+**Phase 2: Graph Traversal**
+- Employed Breadth-First Search (BFS), Depth-First Search (DFS), and Uniform Cost Search algorithms to explore efficient paths between electrodes.
+- Conducted BFS/DFS with 32 electrodes.
+- Implemented the Floyd method to calculate minimum distances between all electrode pairs.
 
-## Etapa 4 Casco Convexo:
-- [x] Gráficos de Polígonos Encontrados
-- [x] Preguntas
+**Phase 3: Minimum Spanning Trees**
+- Identified vertices of Minimum Spanning Trees.
+- Generated graphical representations of Minimum Spanning Trees.
 
-## Etapa 5 Voronoi:
-- [x] Diagramas de Voronoi
-- [x] Pintar Diagramas
-- [x] Circulos en el Origen (Opcional)
-- [x] Preguntas
+**Phase 4: Convex Hull**
+- Determined convex hulls and visualized them through graphical representations.
 
-## Etapa 6 Reporte:
-- [X] Descripción de la Situación Problema
-- [X] Descripción del Experimento Realizado
-- [X] Resultados Etapa 1
-- [X] Resultados Etapa 2
-- [x] Resultados Etapa 3
-- [x] Resultados Etapa 4
-- [x] Resultados Etapa 5
-- [x] Conclusión (Reflexión Personal sobre la Problemática Resuelta y Dificultades en la Elaboración)
-  - [x] Moy
-  - [x] Sam
-  - [x] Emilio
+**Phase 5: Voronoi Diagrams**
+- Constructed Voronoi diagrams to visually represent vertex degrees.
+- Optional: Highlighted circles at the origin.
+- Facilitated the analysis of brain connectivity patterns.
+
+---
+
+**Files Included:**
+1. Python scripts for data analysis and visualization.
+2. EEG data files.
+3. Documentation containing project insights, methodologies, and results.
+
+**Instructions for Running:**
+- Ensure Python environment with required packages (e.g., NumPy, Matplotlib) is set up.
+- Run the Python scripts in sequential order according to the project phases.
+
+**Note:** 
+- For detailed instructions and code documentation, refer to the provided documentation file.
+- For any inquiries or assistance, contact the project contributors listed above.
+
+--- 
+
+**Disclaimer:**
+This project is for research and educational purposes only. The findings and interpretations presented are not intended for medical diagnosis or treatment.
+
+--- 
+
+**Contact Information:**
+For further inquiries or collaboration opportunities, please contact:
+- Moisés Hiram Pineda Campos: moypineda10@gmail.com
+- Emilio Berber Maldonado: emilioberber@hotmail.com
+
+--- 
+
+**Acknowledgements:**
+We would like to express our gratitude to Omar Mendoza Montoya for their valuable guidance and support throughout the project.
